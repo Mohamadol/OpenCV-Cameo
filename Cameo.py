@@ -1,6 +1,8 @@
 import cv2
 from managers import WindowManager, CaptureManager
 import filters
+from trackers import FaceTracker
+import rects
 
 class Cameo:
 
@@ -12,15 +14,19 @@ class Cameo:
         self._windowManager = WindowManager('Cameo', self.onKeyPressed)
         self._captureManager = CaptureManager(capture=cv2.VideoCapture(0), previewWindowManager=self._windowManager, mirrorPreview=True)  
         self._curveFilter = filters.BGRPortraCurveFilter()
+        self._faceTracker = FaceTracker()
      
     def run(self):
         self._windowManager.createWindow()
         while self._windowManager.windowExists:
             self._captureManager.enterFrame()
             frame = self._captureManager.frame
-            self._curveFilter.apply(frame, frame)
+            self._faceTracker.update(frame)
+            #self._curveFilter.apply(frame, frame)
+            self._faceTracker.displayDetections(frame)
             self._captureManager.exitFrame()
             self._windowManager.processEvent()
+            
 
     def onKeyPressed(self, keyCode):
         if keyCode == Cameo.SPACE:

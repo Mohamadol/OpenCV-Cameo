@@ -65,7 +65,7 @@ def isGrayScale(image):
 
 def getImageWidthHeight(image, divisor=1):
     w, h = image.shape[:2]
-    return (w/divisor, h/divisor)
+    return (w//divisor, h//divisor)
 
 
 
