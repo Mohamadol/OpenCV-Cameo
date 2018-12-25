@@ -3,6 +3,20 @@ import numpy
 import utils
 
 
+def strokeEdges(src, dest, blurKsize=7, edgeKsize=5):
+    if blurKsize >= 3:
+        blurredImage = cv2.medianBlur(src, blurKsize)
+        grayImage = cv2.cvtColor(blurredImage, cv2.COLOR_BGR2GRAY)
+    else:
+        grayImage = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
+    cv2.Laplacian(grayImage, cv2.CV_8U, grayImage, edgeKsize)
+    normalizedInverseAlpha = (255 - grayImage) / 255
+    channels = cv2.split(src)
+    for channel in channels:
+        channel [:] = channel * normalizedInverseAlpha
+    cv2.merge(channels, dest)
+
+
 def RCChannelMixer(src, dest):
     ''' This function trasnfers the source image color channels from BGR
         to RC (Red, Cyan) channel by taking the average of Blue and Green
@@ -94,7 +108,7 @@ class BGRPortraCurveFilter(BGRCurveFilter):
         BGRCurveFilter.__init__(    \
             self,   \
             vPoints = [(0,0),(23,20),(157,173),(255,255)],  \
-            bPoints = [(0,0),(41,46),(231,228),(255,255)],  \
+            bPoints = [(0,0),(41,100),(231,228),(255,255)],  \
             gPoints = [(0,0),(52,47),(189,196),(255,255)],  \
             rPoints = [(0,0),(69,69),(213,218),(255,255)],  \
             dataType = dataType )

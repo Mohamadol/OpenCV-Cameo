@@ -60,4 +60,15 @@ def createFlatView(array):
     return flatView
 
 
+def isGrayScale(image):
+    return image.ndim < 3
+
+def getImageWidthHeight(image, divisor=1):
+    w, h = image.shape[:2]
+    return (w/divisor, h/divisor)
+
+
+
+
+
 
