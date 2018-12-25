@@ -29,6 +29,8 @@ class FaceTracker:
         return self._faces
     
     def update(self, image):
+        #to reset the list for the new frame
+        self._faces = []
 
         if not utils.isGrayScale(image):
             image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY, image)
@@ -52,11 +54,8 @@ class FaceTracker:
             faceFrameColor = 255
         else:
             faceFrameColor = (255,255,255)
-       # for face in self._faces:
-        try:
+        for face in self._faces:
             rects.outlineRectangle((self._faces[len(self._faces)-1]).faceRect, image, faceFrameColor)
-        except Exception:
-            pass
         
         
 
