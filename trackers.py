@@ -46,17 +46,45 @@ class FaceTracker:
                 face.faceRect = faceRect
                 #get the coordinates from this faceRect
                 x, y, w, h = faceRect
-                #to do: track eyes, nose and mouths
+                #search for left eye in the upper left of the face
+                searchRect = (x+w//7, y, w*2//7, h//2)
+                face.LeftEyeRect = self._detectSubComponents(self._eyeDetector, image, searchRect, 64)
+                #search for right eye in the upper left of the face
+                searchRect = (x+w*4//7, y, w*2//7, h//2)
+                face.RightEyeRect = self._detectSubComponents(self._eyeDetector, image, searchRect, 64)
+                #search for the nose where it usually is in the face!
+                searchRect = (x+w//4, y+h//2, w//2, h//2)
+                face.noseRect = self._detectSubComponents(self._noseDetector, image, searchRect, 64)
+                #search for the mouth where it usually is in the face!
+                searchRect = (x+w//6, y+h*2//3, w*2//3, h//3)
+                face.mouthRect = self._detectSubComponents(self._mouthDetector, image, searchRect, 64)
                 self._faces.append(face)
+
+    def _detectSubComponents(self, classifier, image, rect, imageToMinSizeRatio):
+        minSize = utils.getImageWidthHeight(image, imageToMinSizeRatio)
+        x, y, w, h = rect
+        subImage = image[y:y+h, x:x+w]
+        subComponentRects = classifier.detectMultiScale(subImage, self.scaleFactor, self.minNeighbors, self.flags, minSize)
+        if len(subComponentRects) != 0:
+            subx, suby, subw, subh = subComponentRects[0]
+            #return the coordinates according to the original image
+            return (x+subx, y+suby, subw, subh)
+        else:
+            return None
+
     
     def displayDetections(self, image):
         if utils.isGrayScale(image):
             faceFrameColor = 255
         else:
             faceFrameColor = (255,255,255)
+            eyeFrameColor = (220,0,40)
+            noseFrameColor = (0,255,0)
+            mouthFrameColor = (10,10,10)
         for face in self._faces:
             rects.outlineRectangle((self._faces[len(self._faces)-1]).faceRect, image, faceFrameColor)
-        
-        
-
+            rects.outlineRectangle((self._faces[len(self._faces)-1]).LeftEyeRect, image, eyeFrameColor)
+            rects.outlineRectangle((self._faces[len(self._faces)-1]).RightEyeRect, image, eyeFrameColor)
+            rects.outlineRectangle((self._faces[len(self._faces)-1]).noseRect, image, noseFrameColor)
+            rects.outlineRectangle((self._faces[len(self._faces)-1]).mouthRect, image, mouthFrameColor)
 

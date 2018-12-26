@@ -9,12 +9,14 @@ class Cameo:
     SPACE = 32
     TAB = 9
     ESCAPE = 27
+    X = 120
 
     def __init__(self):
         self._windowManager = WindowManager('Cameo', self.onKeyPressed)
         self._captureManager = CaptureManager(capture=cv2.VideoCapture(0), previewWindowManager=self._windowManager, mirrorPreview=True)  
         self._curveFilter = filters.BGRPortraCurveFilter()
         self._faceTracker = FaceTracker()
+        self._showDetectionRects = False
      
     def run(self):
         self._windowManager.createWindow()
@@ -23,7 +25,8 @@ class Cameo:
             frame = self._captureManager.frame
             self._faceTracker.update(frame)
             #self._curveFilter.apply(frame, frame)
-            self._faceTracker.displayDetections(frame)
+            if self._showDetectionRects: 
+                self._faceTracker.displayDetections(frame)
             self._captureManager.exitFrame()
             self._windowManager.processEvent()
             
@@ -38,6 +41,8 @@ class Cameo:
                 self._captureManager.stopWritingVideo()
         elif keyCode == Cameo.ESCAPE:
             self._windowManager.destroyWindow()
+        elif keyCode == Cameo.X:
+            self._showDetectionRects = not self._showDetectionRects 
 
 
 cameo = Cameo()
