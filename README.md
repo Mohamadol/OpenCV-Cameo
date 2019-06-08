@@ -1,4 +1,4 @@
-1- This project is based on the first module of a book named _OpenCV Computer Vision with Python_
+1- This project is based on the first module of a book named __OpenCV Computer Vision with Python__
    by *Howse, Joshi and Beyeler*
  
 2- I have followed this tutorial while I was learning OpenCV 
